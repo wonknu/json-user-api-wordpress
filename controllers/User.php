@@ -357,7 +357,6 @@ public function generate_auth_cookie() {
 			$json_api->error("Your 'nonce' value was incorrect. Use the 'get_nonce' API method.");
 		}*/
 
-
 		if (!$json_api->query->username) {
 
 			$json_api->error("You must include a 'username' var in your request.");
@@ -394,6 +393,24 @@ public function generate_auth_cookie() {
 
 		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 32 ), $avatar);	
 
+    $siec_user = new Siec_User($user->ID);
+    $siec_badge = Siec_Badge::get_badge_from_user_id($siec_user->get_id());
+    $user_avatar_img = ''; 
+
+    if ( $siec_user->get('avatar') ){
+      $avatarEls = $siec_user->get('avatar');
+      
+        if(is_array($avatarEls)){
+            $avatarId = $avatarEls['id'];
+            $user_avatar_args = wp_get_attachment_image_src( $avatarId, 'full' );
+        } else {
+            $user_avatar_args = wp_get_attachment_image_src( $avatarEls, 'full' );
+        }
+      if (is_array($user_avatar_args) && sizeof($user_avatar_args) ){
+        $user_avatar_img = $user_avatar_args[0];
+      }
+    }
+
 		return array(
 			"cookie" => $cookie,
 			"cookie_name" => LOGGED_IN_COOKIE,
@@ -410,7 +427,7 @@ public function generate_auth_cookie() {
 				"nickname" => $user->nickname,
 				"description" => $user->user_description,
 				"capabilities" => $user->wp_capabilities,
-				"avatar" => $avatar[1]
+				"avatar" => $user_avatar_img
 
 			),
 		);
