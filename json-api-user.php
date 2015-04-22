@@ -23,7 +23,7 @@ define('JAU_VERSION', '1.8');
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 define('JSON_API_USER_HOME', dirname(__FILE__));
-
+header("Access-Control-Allow-Origin: *");
 
 
 if (!is_plugin_active('json-api/json-api.php')) {
